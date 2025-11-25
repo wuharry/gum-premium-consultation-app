@@ -1,0 +1,25 @@
+{
+  "titleLine1": "有更多問題嗎？",
+  "titleLine2": "GUM 專家為你服務！",
+  "subtitle": "我們提供專業同中立嘅意見，幫你作出最合適嘅選擇。",
+
+  "serviceHours": "服務時間：",
+  "serviceHoursTime": "星期一至五：上午9:30 - 下午5:30",
+  "serviceHoursWeekend": "星期六、日及公眾假期：休息",
+
+  "bookAppointment": "立即預約諮詢",
+  "whatsappUs": "WhatsApp",
+
+  "contactInfo": "如有一般查詢，請使用以下方式聯絡我們：",
+  "hotlineLabel": "熱線",
+  "emailLabel": "電郵",
+  "hotline": "+852 2893 4402",
+  "email": "memberservice@gumhk.com",
+
+  "agreement": "使用預約服務或 WhatsApp 即表示你同意我們的私隱政策。",
+
+  "errorMessage": "發生錯誤，請重試。",
+  "retry": "重試",
+
+  "whatsappMessage": "你好，我想了解更多有關強積金嘅資訊"
+}

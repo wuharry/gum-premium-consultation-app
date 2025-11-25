@@ -1,156 +1,248 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 import {
   View,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
   Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Image,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { useTranslation } from "react-i18next";
 
-import {
-  ErrorView,
-  SpecialistCard,
-  ContactInfo,
-  Agreement,
-  ServiceHours,
-  ActionButtons,
-} from "../components";
-import { translations } from "../i18n/translations";
 import { useSpecialists } from "../hooks/useSpecialists";
+import { SpecialistCard } from "../components/SpecialistCard";
+import { ServiceHours } from "../components/ServiceHours";
+import { ActionButtons } from "./ActionButtons";
+import { ContactInfo } from "../components/ContactInfo";
+import { ErrorView } from "../components/ErrorView";
+// @ts-expect-error: allow importing image asset without module declaration
+import BannerImage from "../../assets/banner.png";
+import { SupportedLanguage } from "../types/language.types";
 
 export const PremiumConsultationScreen: FC = () => {
-  const [language, setLanguage] = useState<"en" | "zh">("en");
-  // const [specialists, setSpecialists] = useState<Specialist[]>([]);
+  const { t, i18n } = useTranslation();
 
-  const {
-    data: specialists = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useSpecialists();
+  const [language, setLanguage] = useState<SupportedLanguage>(
+    i18n.language === "zh"
+      ? SupportedLanguage.Chinese
+      : SupportedLanguage.English
+  );
+  const [bottomInset, setBottomInset] = useState(0);
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const i18n = translations[language];
+  const snapPoints = useMemo(() => [280, 400], []);
 
+  const { data: specialists, isLoading, isError, refetch } = useSpecialists();
+
+  const toggleLanguage = useCallback(() => {
+    setLanguage((prev) => {
+      const next =
+        prev === SupportedLanguage.English
+          ? SupportedLanguage.Chinese
+          : SupportedLanguage.English;
+
+      const nextCode = next === SupportedLanguage.English ? "en" : "zh";
+      if (i18n.language !== nextCode) {
+        i18n.changeLanguage(nextCode);
+      }
+
+      return next;
+    });
+  }, [i18n]);
+
+  // Loading state
   if (isLoading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#FFF",
-        }}
-      >
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
   }
 
+  // Error state
   if (isError) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#FFF" }}>
-        <ErrorView onRetry={refetch} language={language} />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <ErrorView onRetry={refetch} />
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFF" }}>
-      {/* 語言切換按鈕 */}
-      <View
-        style={{
-          position: "absolute",
-          top: 50,
-          right: 16,
-          zIndex: 10,
-          backgroundColor: "#000",
-          paddingHorizontal: 12,
-          paddingVertical: 6,
-          borderRadius: 16,
-        }}
-      >
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        {/* Language toggle button */}
         <TouchableOpacity
-          onPress={() => setLanguage(language === "en" ? "zh" : "en")}
+          style={styles.languageButton}
+          onPress={toggleLanguage}
         >
-          <Text style={{ color: "#FFF", fontSize: 12, fontWeight: "600" }}>
-            {language === "en" ? "中文" : "EN"}
+          <Text style={styles.languageText}>
+            {language === SupportedLanguage.English ? "中文" : "EN"}
           </Text>
         </TouchableOpacity>
-      </View>
 
-      <ScrollView>
-        {/* 頂部橫幅圖片區 */}
-        <View
-          style={{
-            height: 200,
-            backgroundColor: "#D4C5A0",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: bottomInset + 40 },
+          ]}
         >
-          <Text style={{ fontSize: 18, color: "#666" }}>
-            Specialist Banner Image
-          </Text>
-        </View>
+          {/* Top banner */}
+          <View style={styles.banner}>
+            <Image
+              source={BannerImage}
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+          </View>
 
-        {/* 標題 */}
-        <View style={{ padding: 16 }}>
-          <Text style={{ fontSize: 16, color: "#999", marginBottom: 8 }}>
-            {i18n.title.split("\n")[0]}
-          </Text>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              color: "#333",
-              marginBottom: 8,
+          {/* Title section */}
+          <View style={styles.titleSection}>
+            <Text style={styles.subtitle}>{t("titleLine1")}</Text>
+            <Text style={styles.title}>{t("titleLine2")}</Text>
+            <Text style={styles.description}>{t("subtitle")}</Text>
+          </View>
+
+          {/* Specialist list */}
+          <View style={styles.specialistList}>
+            {specialists?.map((specialist) => (
+              <SpecialistCard
+                key={specialist.id}
+                specialist={specialist}
+                language={language}
+              />
+            ))}
+          </View>
+
+          {/* Contact information */}
+          <ContactInfo />
+
+          {/* Agreement */}
+          <View style={styles.agreementContainer}>
+            <Text style={styles.agreementText}>⚠️ {t("agreement")}</Text>
+          </View>
+        </ScrollView>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={snapPoints}
+          enablePanDownToClose={false}
+          backgroundStyle={styles.bottomSheetBackground}
+          handleIndicatorStyle={styles.bottomSheetIndicator}
+        >
+          <View
+            style={styles.bottomSheetContent}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              setBottomInset(height);
             }}
           >
-            {i18n.title.split("\n")[1]}
-          </Text>
-          <Text style={{ fontSize: 14, color: "#666", lineHeight: 20 }}>
-            {i18n.subtitle}
-          </Text>
-        </View>
-
-        {/* 專家列表 */}
-        <View style={{ paddingHorizontal: 16 }}>
-          {specialists.map((specialist) => (
-            <SpecialistCard
-              key={specialist.id}
-              specialist={specialist}
-              language={language}
-            />
-          ))}
-        </View>
-
-        {/* 聯絡資訊 */}
-        <ContactInfo language={language} />
-
-        {/* 協議 */}
-        <Agreement language={language} />
-
-        {/* 底部空間 */}
-        <View style={{ height: 120 }} />
-      </ScrollView>
-
-      {/* 固定在底部的按鈕區 */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: "#FFF",
-          borderTopWidth: 1,
-          borderTopColor: "#E5E5E5",
-          paddingVertical: 16,
-          paddingBottom: 32,
-        }}
-      >
-        <ServiceHours language={language} />
-        <ActionButtons language={language} />
-      </View>
-    </View>
+            <ServiceHours />
+            <ActionButtons language={language} />
+          </View>
+        </BottomSheet>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+  },
+  languageButton: {
+    position: "absolute",
+    top: 50,
+    right: 16,
+    zIndex: 10,
+    backgroundColor: "#000",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  languageText: {
+    color: "#FFF",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  banner: {
+    height: 200,
+    backgroundColor: "#D4C5A0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bannerImage: {
+    width: "100%",
+    height: "100%",
+  },
+  titleSection: {
+    padding: 16,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#999",
+    marginBottom: 8,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
+  },
+  specialistList: {
+    paddingHorizontal: 16,
+  },
+  scrollContent: {
+    paddingBottom: 16,
+  },
+  bottomSheetBackground: {
+    backgroundColor: "#FFF",
+    borderTopWidth: 1,
+    borderTopColor: "#E5E5E5",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  bottomSheetIndicator: {
+    backgroundColor: "#999",
+    width: 40,
+  },
+  bottomSheetContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 24,
+  },
+  agreementContainer: {
+    padding: 16,
+    backgroundColor: "#FFF9E6",
+    margin: 16,
+    borderRadius: 8,
+  },
+  agreementText: {
+    fontSize: 12,
+    color: "#666",
+    lineHeight: 18,
+  },
+});

@@ -1,22 +1,25 @@
 // App.tsx
 
-import { GestureHandlerRootView } from "react-native-gesture-handler"; //讓所有會用手勢的元件能正常運作
 import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"; //讓 BottomSheetModal 可以在整個應用中共享 context
-import { PremiumConsultationScreen } from "./src/screens";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { PremiumConsultationScreen } from "./src/screens/PremiumConsultationScreen";
+import "./src/i18n/i18n";
 
-// 建議放在 component 外面，避免每次 re-render 重建
 const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <BottomSheetModalProvider>
-          <PremiumConsultationScreen />
-        </BottomSheetModalProvider>
-      </QueryClientProvider>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <BottomSheetModalProvider>
+            <PremiumConsultationScreen />
+          </BottomSheetModalProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

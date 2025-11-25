@@ -1,21 +1,28 @@
 import { FC } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { Specialist } from "../types";
+import { Specialist } from "../types/specialist.types";
+import { SupportedLanguage } from "../types/language.types";
 
-interface Props {
+interface SpecialistCardProps {
   specialist: Specialist;
-  language: "en" | "zh";
+  language: SupportedLanguage;
 }
 
-export const SpecialistCard: FC<Props> = ({ specialist, language }) => {
+export const SpecialistCard: FC<SpecialistCardProps> = ({
+  specialist,
+  language,
+}) => {
+  const displayName =
+    language === SupportedLanguage.English
+      ? specialist.name
+      : specialist.nameZh;
+
   return (
     <View style={styles.container}>
       <View style={styles.avatar}>
         <Image source={{ uri: specialist.imageUrl }} style={styles.image} />
       </View>
-      <Text style={styles.name}>
-        {language === "en" ? specialist.name : specialist.nameZh}
-      </Text>
+      <Text style={styles.name}>{displayName}</Text>
     </View>
   );
 };

@@ -1,19 +1,15 @@
 import { View, Text, StyleSheet } from "react-native";
-import { translations } from "../i18n/translations";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 
-interface Props {
-  language: "en" | "zh";
-}
-
-export const ServiceHours: FC<Props> = ({ language }) => {
-  const i18n = translations[language];
+export const ServiceHours: FC = () => {
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{i18n.serviceHours}</Text>
-      <Text style={styles.text}>{i18n.serviceHoursTime}</Text>
-      <Text style={styles.text}>{i18n.serviceHoursWeekend}</Text>
+      <Text style={styles.text}>{t("serviceHours")}</Text>
+      <Text style={styles.text}>{t("serviceHoursTime")}</Text>
+      <Text style={styles.text}>{t("serviceHoursWeekend")}</Text>
     </View>
   );
 };

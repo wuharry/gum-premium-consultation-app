@@ -1,21 +1,20 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { translations } from "../i18n/translations";
+import { useTranslation } from "react-i18next";
 import { FC } from "react";
 
-interface Props {
+interface ErrorViewProps {
   onRetry: () => void;
-  language: "en" | "zh";
 }
 
-export const ErrorView: FC<Props> = ({ onRetry, language }) => {
-  const i18n = translations[language];
+export const ErrorView: FC<ErrorViewProps> = ({ onRetry }) => {
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>{i18n.errorMessage}</Text>
+      <Text style={styles.message}>{t("errorMessage")}</Text>
 
       <TouchableOpacity style={styles.button} onPress={onRetry}>
-        <Text style={styles.buttonText}>{i18n.retry}</Text>
+        <Text style={styles.buttonText}>{t("retry")}</Text>
       </TouchableOpacity>
     </View>
   );

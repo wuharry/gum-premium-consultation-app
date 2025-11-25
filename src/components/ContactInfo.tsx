@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,33 +6,32 @@ import {
   Linking,
   StyleSheet,
 } from "react-native";
-import { translations } from "../i18n/translations";
+import { useTranslation } from "react-i18next";
 
-interface Props {
-  language: "en" | "zh";
-}
+export const ContactInfo: FC = () => {
+  const { t } = useTranslation();
 
-export const ContactInfo: React.FC<Props> = ({ language }) => {
-  const i18n = translations[language];
-
-  const handleCallPhone = () => {
+  const handleCallPhone = useCallback(() => {
     Linking.openURL("tel:+85228934402");
-  };
+  }, []);
 
-  const handleSendEmail = () => {
+  const handleSendEmail = useCallback(() => {
     Linking.openURL("mailto:memberservice@gumhk.com");
-  };
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{i18n.contactInfo}</Text>
-
+      <Text style={styles.text}>{t("contactInfo")}</Text>
       <TouchableOpacity onPress={handleCallPhone}>
-        <Text style={styles.link}>Hotline: {i18n.hotline}</Text>
+        <Text style={styles.link}>
+          {t("hotlineLabel")}: {t("hotline")}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={handleSendEmail}>
-        <Text style={styles.link}>Email: {i18n.email}</Text>
+        <Text style={styles.link}>
+          {t("emailLabel")}: {t("email")}
+        </Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,11 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchSpecialists } from "../services/specialistService";
 
-// 使用 react-query 來管理資料載入
+/**
+ * Hook for fetching specialists using React Query.
+ * Automatically handles:
+ * - caching
+ * - loading & error states
+ * - retry behavior
+ */
 export const useSpecialists = () => {
   return useQuery({
     queryKey: ["specialists"],
     queryFn: fetchSpecialists,
-    retry: 2,
+    retry: 2, // retry twice on failure
   });
 };

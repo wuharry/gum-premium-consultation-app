@@ -1,4 +1,4 @@
-import { Specialist } from "../types";
+import { Specialist } from "../types/specialist.types";
 
 // 硬編碼的專家資料
 const mockSpecialists: Specialist[] = [
