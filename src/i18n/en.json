@@ -1,0 +1,25 @@
+{
+  "titleLine1": "Got more questions?",
+  "titleLine2": "GUM Specialists are here!",
+  "subtitle": "We provide professional, impartial advice to help you find what's best for you",
+
+  "serviceHours": "Service Hours:",
+  "serviceHoursTime": "Monday – Friday: 9:30am - 5:30pm",
+  "serviceHoursWeekend": "Saturday, Sunday & Public Holidays: Closed",
+
+  "bookAppointment": "Book appointment",
+  "whatsappUs": "WhatsApp us",
+
+  "contactInfo": "For general enquiries, please reach out using the method below:",
+  "hotlineLabel": "Hotline",
+  "emailLabel": "Email",
+  "hotline": "+852 2893 4402",
+  "email": "memberservice@gumhk.com",
+
+  "agreement": "Your use of our appointment service or WhatsApp communication constitutes your agreement to our privacy policy.",
+
+  "errorMessage": "Oops! Something went wrong. Please try again.",
+  "retry": "Retry",
+
+  "whatsappMessage": "Hello, I would like to learn more about MPF information."
+}
