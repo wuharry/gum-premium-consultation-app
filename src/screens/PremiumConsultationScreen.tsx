@@ -44,9 +44,8 @@ export const PremiumConsultationScreen: FC = () => {
           ? SupportedLanguage.Chinese
           : SupportedLanguage.English;
 
-      const nextCode = next === SupportedLanguage.English ? "en" : "zh";
-      if (i18n.language !== nextCode) {
-        i18n.changeLanguage(nextCode);
+      if (i18n.language !== next) {
+        i18n.changeLanguage(next);
       }
 
       return next;
