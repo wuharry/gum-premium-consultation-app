@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Image,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -15,9 +16,7 @@ import { useTranslation } from "react-i18next";
 
 import { useSpecialists } from "../hooks/useSpecialists";
 import { SpecialistCard } from "../components/SpecialistCard";
-import { ServiceHours } from "../components/ServiceHours";
 import { ActionButtons } from "./ActionButtons";
-import { ContactInfo } from "../components/ContactInfo";
 import { ErrorView } from "../components/ErrorView";
 // @ts-expect-error: allow importing image asset without module declaration
 import BannerImage from "../../assets/banner.png";
@@ -53,6 +52,14 @@ export const PremiumConsultationScreen: FC = () => {
       return next;
     });
   }, [i18n]);
+
+  const handleCallPhone = useCallback(() => {
+    Linking.openURL("tel:+85228934402");
+  }, []);
+
+  const handleSendEmail = useCallback(() => {
+    Linking.openURL("mailto:memberservice@gumhk.com");
+  }, []);
 
   // Loading state
   if (isLoading) {
@@ -119,7 +126,20 @@ export const PremiumConsultationScreen: FC = () => {
           </View>
 
           {/* Contact information */}
-          <ContactInfo />
+          <View style={styles.contactContainer}>
+            <Text style={styles.contactText}>{t("contactInfo")}</Text>
+            <TouchableOpacity onPress={handleCallPhone}>
+              <Text style={styles.contactLink}>
+                {t("hotlineLabel")}: {t("hotline")}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleSendEmail}>
+              <Text style={styles.contactLink}>
+                {t("emailLabel")}: {t("email")}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Agreement */}
           <View style={styles.agreementContainer}>
@@ -142,7 +162,15 @@ export const PremiumConsultationScreen: FC = () => {
               setBottomInset(height);
             }}
           >
-            <ServiceHours />
+            <View style={styles.serviceHoursContainer}>
+              <Text style={styles.serviceHoursText}>{t("serviceHours")}</Text>
+              <Text style={styles.serviceHoursText}>
+                {t("serviceHoursTime")}
+              </Text>
+              <Text style={styles.serviceHoursText}>
+                {t("serviceHoursWeekend")}
+              </Text>
+            </View>
             <ActionButtons language={language} />
           </View>
         </BottomSheet>
@@ -244,5 +272,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     lineHeight: 18,
+  },
+  // ContactInfo styles
+  contactContainer: {
+    padding: 16,
+    backgroundColor: "#F9F9F9",
+    marginTop: 16,
+  },
+  contactText: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
+  },
+  contactLink: {
+    fontSize: 14,
+    color: "#007AFF",
+    marginTop: 8,
+  },
+  // ServiceHours styles
+  serviceHoursContainer: {
+    marginVertical: 16,
+  },
+  serviceHoursText: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    marginTop: 2,
   },
 });
